@@ -9,12 +9,19 @@ using namespace std;
 int main(){
     setlocale(LC_ALL, "Russian");
     int s;
-    double e[9] = {1,0,0,0,1,0,0,0,1};
-    double *aa = new double [s*s];
-    double *ab = new double [s];
-
     cout << "введите размерность матрицы: ";
     cin >> s;
+    double *aa = new double [s*s], *ab = new double [s], *e = new double [s*s];
+    //создание единичной матрицы
+    for(int i=0; i<s; i++) {
+        for(int j=0; j<s; j++) {
+            e[s*i + j]=0;
+            if(i==j) e[s*i + j]=1;
+        }
+    }
+    matr em(s, e);
+    //cout << em << endl;
+    //создание единичной матрицы
     cout << "введите матрицу коэфициентов: " << endl << "(";
     for(int i = 0; i < s*s; i++) cin >> aa[i];
     cout << ")" << endl;
@@ -25,6 +32,7 @@ int main(){
     cout << ")" << endl;
     vect va(s, ab);
     cout << "введённый вектор: " << endl << va << endl;
+
     vect a(s);
     const double eps = 0.001; //желаемая точность
     double* TempX = new double[s];
