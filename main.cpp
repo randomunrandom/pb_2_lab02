@@ -6,12 +6,73 @@
 
 using namespace std;
 
+matr rmij(matr m, int row, int col){
+    int n = m.getSize();
+    matr tmp_matr(n);
+    int ki = 0;
+    for (int i = 0; i < n; i++){
+        if(i != row){
+            for (int j = 0, kj = 0; j < n; j++){
+                if (j != col){
+                    tmp_matr.setMcord(ki, kj, m.getMcord(i, j));
+                    kj++;
+                }
+            }
+            ki++;
+        }
+    }
+    return tmp_matr;
+}//создвёт новую матрицу без столбцов row и col
+
+int det(matr a) {
+    double temp = 0;   //временная переменная для хранения определителя
+    int k = 1, n = a.getSize();      //степень
+    if(n < 1){
+        std::cout<<"Не верный размер матрицы!!!" << std::endl;
+        return 0;
+    }
+    else if (n == 1) temp = a.getMcord(0, 0);
+    else if (n == 2) temp = a.getMcord(0, 0) * a.getMcord(1, 1) - a.getMcord(1, 0) * a.getMcord(0, 1);
+    else {
+        for(int i = 0; i < n; i++) {
+            int m = n - 1;
+            matr tmp_matr(m);
+            tmp_matr = rmij(a, m, i);
+            temp = temp + k * a.getMcord(0, i) * det(tmp_matr);
+            k = -k;
+            delete &tmp_matr;
+        }
+    }
+    return temp;
+}
+matr transpon(matr a){
+    int n = a.getSize();
+    matr tmp_matr(n);
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            tmp_matr.setMcord(i, j, a.getMcord(i, j));
+    return tmp_matr;
+}
+matr obr(matr a) {
+    int n = a.getSize();
+    matr obr_matr(n);
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            int m = n - 1;
+            matr tmp_matr(m);
+            tmp_matr = rmij(a, i, j);
+            obr_matr.setMcord(i, j, pow(-1.0, i + j + 2) * det(tmp_matr) / det(a));
+            delete &tmp_matr;
+        }
+    }
+    return obr_matr;
+}
 int main(){
     setlocale(LC_ALL, "Russian");
     int s;
     cout << "введите размерность матрицы: ";
     cin >> s;
-    double *aa = new double [s*s], *ab = new double [s], *e = new double [s*s];
+    double *aa = new double [s*s], *ab = new double [s], *e = new double [s*s], *o = new double [s*s];
     //создание единичной матрицы
     for(int i=0; i<s; i++) {
         for(int j=0; j<s; j++) {
@@ -25,8 +86,9 @@ int main(){
     cout << "введите матрицу коэфициентов: " << endl << "(";
     for(int i = 0; i < s*s; i++) cin >> aa[i];
     cout << ")" << endl;
-    matr mp(s, aa);
-    cout << "введённая матрица: " << endl << mp << endl;
+    matr mp(s, aa), om(s);
+    om = obr(mp);
+    cout << "введённая матрица: " << endl << mp << endl << om << endl;
     cout << "введите вектор ответов: " << endl << "(";
     for(int i = 0; i < s; i++)  cin >> ab[i];
     cout << ")" << endl;
